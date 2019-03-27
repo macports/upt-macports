@@ -1,0 +1,9 @@
+{% extends 'base.Portfile' %}
+
+{% block portgroup %}
+PortGroup           python 1.0
+{% endblock %}
+
+{% block versions %}
+python.versions     27 36 37
+{% endblock %}

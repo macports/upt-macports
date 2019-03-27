@@ -1,0 +1,28 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+{% block portgroup %}
+{% endblock %}
+
+{% block nameversion %}
+name                {{ pkg._pkgname() }}
+version             {{ pkg.upt_pkg.version }}
+{% endblock %}
+maintainers         nomaintainer
+description         {{ pkg.upt_pkg.summary }}
+long_description    ${description}
+
+platforms           darwin
+
+{% block versions %}
+{% endblock %}
+
+{% block build_deps %}
+{{ depends_build-append pkg.build_depends }}
+{% endblock %}
+{% block run_deps %}
+{{ depends_run-append pkg.run_depends }}
+{% endblock %}
+{% block test_deps %}
+{{ depends('TEST', pkg.test_depends) }}
+{% endblock %}
