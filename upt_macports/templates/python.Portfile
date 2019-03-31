@@ -1,9 +1,20 @@
-{% extends 'base.Portfile' %}
-
-{% block portgroup %}
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+PortSystem          1.0
 PortGroup           python 1.0
-{% endblock %}
 
-{% block versions %}
+name                py-{{ pkg._pkgname() }}
+version             {{ pkg.upt_pkg.version }}
+
+maintainers         nomaintainer
+description         {{ pkg.upt_pkg.summary }}
+long_description    ${description}
+
+platforms           darwin
+
+checksums           md5     {{ pkg.upt_pkg.archives[0].md5 }} \
+                    sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
+                    rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
+                    size    {{ pkg.upt_pkg.archives[0].size }}
+                                
 python.versions     27 36 37
-{% endblock %}
+
