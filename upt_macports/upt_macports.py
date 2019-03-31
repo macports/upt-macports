@@ -69,6 +69,17 @@ class MacPortsPythonPackage(MacPortsPackage):
 #        return f'py-{name}'
 
 
+class MacPortsNpmPackage(MacPortsPackage):
+    template = 'npm.Portfile'
+
+    def _pkgname(self):
+        macports_name = self._normalized_macports_name(self.upt_pkg.name)
+        return f'{macports_name}'
+
+    @staticmethod
+    def _normalized_macports_name(name):
+        name = name.lower()
+        return f'{name}'
 
 class MacPortsPerlPackage(MacPortsPackage):
     template = 'perl.Portfile'
@@ -94,8 +105,8 @@ class MacportsBackend(upt.Backend):
         pkg_classes = {
             'pypi': MacPortsPythonPackage,
             'cpan': MacPortsPerlPackage,
-            'rubygems': MacPortsRubyPackage
-            
+            'rubygems': MacPortsRubyPackage,
+            'npm': MacPortsNpmPackage,
         }
 
         try:
