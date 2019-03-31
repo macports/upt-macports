@@ -1,0 +1,25 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+PortSystem          1.0
+
+
+{% block nameversion %}
+name                npm-{{ pkg._pkgname() }}
+version             {{ pkg.upt_pkg.version }}
+{% endblock %}
+categories          npm
+maintainers         nomaintainer
+description         {{ pkg.upt_pkg.summary }}
+long_description    ${description}
+
+platforms           darwin
+license             {{ pkg.upt_pkg.licenses }}
+homepage            {{ pkg.upt_pkg.homepage }}
+
+distname            {{ pkg._pkgname() }}-{{ pkg.upt_pkg.version }}
+distfiles           {{ pkg._pkgname() }}-{{ pkg.upt_pkg.version }}.tgz
+master_sites        {{ pkg.upt_pkg.archives[0].url }}
+
+checksums           md5     {{ pkg.upt_pkg.archives[0].md5 }} \
+                    sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
+                    rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
+                    size    {{ pkg.upt_pkg.archives[0].size }}
