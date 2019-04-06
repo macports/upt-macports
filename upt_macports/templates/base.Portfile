@@ -5,24 +5,23 @@ PortSystem          1.0
 {% endblock %}
 
 {% block nameversion %}
-name                {{ pkg._pkgname() }}
-version             {{ pkg.upt_pkg.version }}
 {% endblock %}
+
 maintainers         nomaintainer
 description         {{ pkg.upt_pkg.summary }}
 long_description    ${description}
 
 platforms           darwin
+supported_archs     noarch
+
+{% block dist_info %}
+{% endblock %}
+
+license             {% for i in pkg.upt_pkg.licenses %}{{i.name}}{% endfor %}
+
+checksums           sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
+                    rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
+                    size    {{ pkg.upt_pkg.archives[0].size }}
 
 {% block versions %}
-{% endblock %}
-
-{% block build_deps %}
-{{ depends_build-append pkg.build_depends }}
-{% endblock %}
-{% block run_deps %}
-{{ depends_run-append pkg.run_depends }}
-{% endblock %}
-{% block test_deps %}
-{{ depends('TEST', pkg.test_depends) }}
 {% endblock %}

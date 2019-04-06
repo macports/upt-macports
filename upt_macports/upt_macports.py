@@ -1,6 +1,6 @@
 import upt
 import logging
-import jinja2 
+import jinja2
 
 class MacPortsPackage(object):
     def __init__(self):
@@ -14,7 +14,7 @@ class MacPortsPackage(object):
         self.logger.info(f'Hello, creating the package')
         print(self._render_makefile_template())
         print(self._depends)
-        
+
         # self.name, self.specifier
 
     def _render_makefile_template(self):
@@ -26,8 +26,6 @@ class MacPortsPackage(object):
         )
         # env.filters['reqformat'] = self.jinja2_reqformat
         template = env.get_template(self.template)
-        print(template)
-        print(self)
         return template.render(pkg=self)
 
     def _depends(self, phase):
@@ -56,7 +54,7 @@ class MacPortsPythonPackage(MacPortsPackage):
     def _normalized_macports_name(name):
         name = name.lower()
         return f'py-{name}'
-    
+
 #        if name == 'py':
 #            return 'py-py'
 #
@@ -86,17 +84,15 @@ class MacPortsPerlPackage(MacPortsPackage):
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)
-        return f'{macports_name}'
+        return macports_name
 
     @staticmethod
     def _normalized_macports_name(name):
         name = name # for perl changing to lower case may cause error
-        return f'{name}'
+        return name
 
 class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
-
-
 
 class MacportsBackend(upt.Backend):
     name = 'macports'
@@ -106,7 +102,7 @@ class MacportsBackend(upt.Backend):
             'pypi': MacPortsPythonPackage,
             'cpan': MacPortsPerlPackage,
             'rubygems': MacPortsRubyPackage,
-            'npm': MacPortsNpmPackage,
+            'npm': MacPortsNpmPackage
         }
 
         try:
