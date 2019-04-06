@@ -1,30 +1,20 @@
-# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-PortSystem          1.0
-PortGroup           perl5 1.0
+{% extends 'base.Portfile' %}
 
+{% block portgroup %}
+PortGroup           perl5 1.0
+{% endblock %}
+{% block nameversion %}
 perl5.branches      5.26 5.28
 perl5.setup         {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}
+revision            0
+{% endblock %}
 
-license             {% for i in pkg.upt_pkg.licenses %}
-{{ i.spdx_identifier }} {% if loop.index != pkg.upt_pkg.licenses|length %}\{% endif %}
-{% endfor %}
-
-maintainers         nomaintainer
-description         {{ pkg.upt_pkg.summary }}
-long_description    ${description}
-
-platforms           darwin
-supported_archs     noarch
-
-checksums           md5     {{ pkg.upt_pkg.archives[0].md5 }} \
-                    sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
-                    rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
-                    size    {{ pkg.upt_pkg.archives[0].size }}
-
+{% block versions %}
 if {${perl5.major} != ""} {
     depends_lib-append \
                     {% for i in pkg.upt_pkg.requirements.run %}
                     port:p${perl5.major}-{{i.name|replace('::','-')|lower}} {% if loop.index != pkg.upt_pkg.requirements.run|length %}\{% endif %}
-                    
+
                     {% endfor %}
 }
+{% endblock %}
