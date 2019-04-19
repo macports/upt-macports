@@ -24,12 +24,19 @@ if {${name} ne ${subport}} {
                     port:py${python.version}-setuptools
     {% if pkg.upt_pkg.requirements.run|length > 0 %}
     depends_lib-append \
-                    {% for i in pkg.upt_pkg.requirements.run %}
+                    {% for i in pkg.upt_pkg.requirements.run|sort(attribute='name') %}
                     port:py${python.version}-{{i.name}}{% if not loop.last %} \
                     {% endif %}
                     {% endfor %}
     {% endif %}
 
+    {% if pkg.upt_pkg.requirements.test|length > 0 %}
+    depends_test-append \
+                    {% for i in pkg.upt_pkg.requirements.test|sort(attribute='name') %}
+                    port:py${python.version}-{{i.name}}{% if not loop.last %} \
+                    {% endif %}
+                    {% endfor %}
+    {% endif %}
     livecheck.type  none
 }
 {% endblock %}
