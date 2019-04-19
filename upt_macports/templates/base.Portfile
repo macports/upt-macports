@@ -12,7 +12,8 @@ description         {{ pkg.upt_pkg.summary }}
 long_description    ${description}
 
 platforms           darwin
-supported_archs     noarch
+# uncomment and edit the following line depending on whether the port installs architecture-dependent files
+# supported_archs     noarch
 
 {% block dist_info %}
 {% endblock %}
