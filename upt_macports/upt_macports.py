@@ -2,20 +2,16 @@ import upt
 import logging
 import jinja2
 
+
 class MacPortsPackage(object):
     def __init__(self):
         self.logger = logging.getLogger('upt')
 
     def create_package(self, upt_pkg, output):
         self.upt_pkg = upt_pkg
-        #self._create_output_directories(upt_pkg, output)
-        #self._create_makefile()
-        #self._create_pkg_descr()
         self.logger.info(f'Hello, creating the package')
         print(self._render_makefile_template())
         print(self._depends)
-
-        # self.name, self.specifier
 
     def _render_makefile_template(self):
         env = jinja2.Environment(
@@ -43,6 +39,7 @@ class MacPortsPackage(object):
     def test_depends(self):
         return self._depends('test')
 
+
 class MacPortsPythonPackage(MacPortsPackage):
     template = 'python.Portfile'
 
@@ -54,17 +51,6 @@ class MacPortsPythonPackage(MacPortsPackage):
     def _normalized_macports_name(name):
         name = name.lower()
         return f'py-{name}'
-
-#        if name == 'py':
-#            return 'py-py'
-#
-#        if name.startswith('python-'):
-#            name = name[7:]
-#        elif name.startswith('py-'):
-#            name = name[3:]
-#        elif name.startswith('py'):
-#            name = name[2:]
-#        return f'py-{name}'
 
 
 class MacPortsNpmPackage(MacPortsPackage):
@@ -79,6 +65,7 @@ class MacPortsNpmPackage(MacPortsPackage):
         name = name.lower()
         return f'{name}'
 
+
 class MacPortsPerlPackage(MacPortsPackage):
     template = 'perl.Portfile'
 
@@ -88,13 +75,14 @@ class MacPortsPerlPackage(MacPortsPackage):
 
     @staticmethod
     def _normalized_macports_name(name):
-        name = name # for perl changing to lower case may cause error
         return name
+
 
 class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
 
-class MacportsBackend(upt.Backend):
+
+class MacPortsBackend(upt.Backend):
     name = 'macports'
 
     def create_package(self, upt_pkg, output=None):
