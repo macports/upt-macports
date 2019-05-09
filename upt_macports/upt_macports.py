@@ -1,6 +1,8 @@
 import upt
 import logging
 import jinja2
+import pkg_resources
+import json
 
 
 class MacPortsPackage(object):
@@ -23,6 +25,16 @@ class MacPortsPackage(object):
         # env.filters['reqformat'] = self.jinja2_reqformat
         template = env.get_template(self.template)
         return template.render(pkg=self)
+
+    @property
+    def licenses(self):
+        relpath = 'spdx2macports.json'
+        filepath = pkg_resources.resource_filename(__name__, relpath)
+        with open(filepath) as f:
+            spdx2macports = json.loads(f.read())
+
+        return ' '.join([spdx2macports.get(license.spdx_identifier, 'unknown')
+                        for license in self.upt_pkg.licenses])
 
     def _depends(self, phase):
         return self.upt_pkg.requirements.get(phase, [])
