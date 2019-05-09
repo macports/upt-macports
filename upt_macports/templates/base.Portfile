@@ -18,11 +18,7 @@ platforms           darwin
 {% block dist_info %}
 {% endblock %}
 
-{% if pkg.upt_pkg.licenses|length > 0 %}
-license             {% for i in pkg.upt_pkg.licenses %}{{i.name}}{% endfor %}
-{% else %}
-license             unknown
-{% endif %}
+licenses            {{ pkg.licenses }}
 
 checksums           sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
                     rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
