@@ -6,18 +6,23 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
 strategy:
   matrix:
-    Python27:
-      python.version: '2.7'
-    Python35:
-      python.version: '3.5'
-    Python36:
+    py36_linux:
+      imageName: 'ubuntu-16.04'
       python.version: '3.6'
-    Python37:
+    py37_linux:
+      imageName: 'ubuntu-16.04'
       python.version: '3.7'
+    py36_macos:
+      imageName: 'macos-10.13'
+      python.version: '3.6'
+    py37_macos:
+      imageName: 'macos-10.13'
+      python.version: '3.7'
+
+pool:
+  vmImage: $(imageName)
 
 steps:
 - task: UsePythonVersion@0
@@ -25,12 +30,12 @@ steps:
     versionSpec: '$(python.version)'
   displayName: 'Use Python $(python.version)'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+- script: python -m pip install --upgrade pip
+  displayName: 'Install pip'
 
-- script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'pytest'
+
+- script: pip install tox
+  displayName: 'Install Tox'
+
+- script: tox -epy,flake8
+  displayName: 'Run Tox'
