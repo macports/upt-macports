@@ -51,6 +51,26 @@ class MacPortsPackage(object):
     def test_depends(self):
         return self._depends('test')
 
+    @property
+    def archive_type(self):
+        archive_keyword = {
+            'gz': 'gz',
+            '7z': '7z',
+            'bz2': 'bzip2',
+            'lzma': 'lzma',
+            'tar': 'tar',
+            'zip': 'zip',
+            'xz': 'xz'
+        }
+        try:
+            archive_name = self.upt_pkg.get_archive().filename
+            archive_type = archive_name.split('.')[-1]
+            return archive_keyword.get(archive_type, 'unknown')
+
+        except upt.ArchiveUnavailable:
+            self.logger.error('Could not determine the type of the source archive') # noqa
+            return 'unknown'
+
 
 class MacPortsPythonPackage(MacPortsPackage):
     template = 'python.Portfile'
