@@ -16,7 +16,13 @@ platforms           darwin
 # supported_archs     noarch
 
 {% block dist_info %}
-{% endblock %}
+{% endblock -%}
+
+{% if pkg.archive_type == 'unknown' -%}
+# Detection of archive type failed
+{% elif pkg.archive_type != 'gz' %}
+{{ "use_%-15s yes"|format(pkg.archive_type) }}
+{% endif %}
 
 licenses            {{ pkg.licenses }}
 
