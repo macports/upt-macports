@@ -13,7 +13,6 @@ class MacPortsPackage(object):
         self.upt_pkg = upt_pkg
         self.logger.info(f'Hello, creating the package')
         print(self._render_makefile_template())
-        print(self._depends)
 
     def _render_makefile_template(self):
         env = jinja2.Environment(
@@ -22,7 +21,6 @@ class MacPortsPackage(object):
             lstrip_blocks=True,
             keep_trailing_newline=True,
         )
-        # env.filters['reqformat'] = self.jinja2_reqformat
         template = env.get_template(self.template)
         return template.render(pkg=self)
 
