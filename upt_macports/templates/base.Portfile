@@ -4,16 +4,22 @@ PortSystem          1.0
 {% block portgroup %}
 {% endblock %}
 
+# Portfile generated/maintained using the Universal Packaging Tool (upt)
 {% block nameversion %}
 {% endblock %}
 
-maintainers         nomaintainer
+# Please adapt the lines with a "TODO" statement and check the guide for more information:
+# https://guide.macports.org/#reference.keywords
+
+# categories-append # TODO
+platforms           darwin
+# TODO: uncomment the following line if no architecture-dependent files are installed, otherwise remove
+# supported_archs     noarch
+license             {{ pkg.licenses }}
+# maintainers         {example.org:julesverne @GitHub-handle} openmaintainer # TODO
+
 description         {{ pkg.upt_pkg.summary }}
 long_description    ${description}
-
-platforms           darwin
-# uncomment and edit the following line depending on whether the port installs architecture-dependent files
-# supported_archs     noarch
 
 {% block dist_info %}
 {% endblock -%}
@@ -23,8 +29,6 @@ platforms           darwin
 {% elif pkg.archive_type != 'gz' %}
 {{ "use_%-15s yes"|format(pkg.archive_type) }}
 {% endif %}
-
-license             {{ pkg.licenses }}
 
 checksums           sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
                     rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
