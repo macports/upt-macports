@@ -24,7 +24,7 @@ platforms           darwin
 {{ "use_%-15s yes"|format(pkg.archive_type) }}
 {% endif %}
 
-licenses            {{ pkg.licenses }}
+license             {{ pkg.licenses }}
 
 checksums           sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
                     rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
