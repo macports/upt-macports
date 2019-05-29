@@ -3,6 +3,7 @@ import logging
 import jinja2
 import pkg_resources
 import json
+import requests
 
 
 class MacPortsPackage(object):
@@ -104,7 +105,31 @@ class MacPortsPerlPackage(MacPortsPackage):
 
     @staticmethod
     def _normalized_macports_name(name):
-        return name
+        return name.replace('::', '-')
+
+    def _cpandir(self):
+        pkg = self.upt_pkg
+        # If no archives detected then we cannot locate dist file
+        if not pkg.archives:
+            self.logger.warning('No dist file was found')
+            return ' # could not locate dist file'
+
+        # We start by checking at usual location
+        archive_name = pkg.archives[0].url.split('/')[-1]
+        part_name = pkg.name.replace('::', '-').split('-')[0]
+        check_url = f'https://cpan.metacpan.org/modules/by-module/{part_name}/{archive_name}' # noqa
+        r = requests.head(check_url)
+        if r.status_code == 200:
+            self.logger.info('Dist file found at usual location')
+            return ''
+        else:
+            # Sometimes if it is not available,
+            # then we fallback to alternate location
+            # to be verified by the maintainer
+            fallback_dist = '/'.join(pkg.archives[0].url.split('id/')[1].split('/')[:-1]) # noqa
+            self.logger.info('Dist file was not found at usual location')
+            self.logger.info('Using fallback location for dist file')
+            return f' ../../authors/id/{fallback_dist}/'
 
 
 class MacPortsRubyPackage(MacPortsPackage):
