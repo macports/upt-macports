@@ -34,7 +34,7 @@ class MacPortsPackage(object):
             spdx2macports = json.loads(f.read())
 
         return ' '.join([spdx2macports.get(license.spdx_identifier, 'unknown')
-                        for license in self.upt_pkg.licenses])
+                        for license in self.upt_pkg.licenses]) or 'unknown'
 
     def _depends(self, phase):
         return self.upt_pkg.requirements.get(phase, [])

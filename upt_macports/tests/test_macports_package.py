@@ -10,7 +10,7 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
 
     def test_no_licenses(self):
         self.package.upt_pkg.licenses = []
-        expected = ''
+        expected = 'unknown'
         self.assertEqual(self.package.licenses, expected)
 
     def test_one_license(self):
