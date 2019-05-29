@@ -5,16 +5,40 @@ PortGroup           perl5 1.0
 {% endblock %}
 {% block nameversion %}
 perl5.branches      5.26 5.28
-perl5.setup         {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}
+perl5.setup         {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}{{ pkg._cpandir() }}
 revision            0
 {% endblock %}
 
 {% block versions %}
+{%- if pkg.upt_pkg.requirements.run or pkg.upt_pkg.requirements.test or pkg.upt_pkg.requirements.build or pkg.upt_pkg.requirements.config %}
 if {${perl5.major} != ""} {
-    depends_lib-append \
-                    {% for i in pkg.upt_pkg.requirements.run %}
-                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}} {% if loop.index != pkg.upt_pkg.requirements.run|length %}\{% endif %}
+    {%- if pkg.upt_pkg.requirements.config or pkg.upt_pkg.requirements.build %}
 
+    depends_build-append \
+                    {% for i in (pkg.upt_pkg.requirements.build + pkg.upt_pkg.requirements.config)|sort(attribute='name')|unique(attribute='name') %}
+                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}}{% if not loop.last %} \
+                    {% endif %}
                     {% endfor %}
+    {% endif %}
+
+    {% if pkg.upt_pkg.requirements.run %}
+
+    depends_lib-append \
+                    {% for i in pkg.upt_pkg.requirements.run|sort(attribute='name') %}
+                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}}{% if not loop.last %} \
+                    {% endif %}
+                    {% endfor %}
+    {% endif %}
+
+    {% if pkg.upt_pkg.requirements.test %}
+
+    depends_test-append \
+                    {% for i in pkg.upt_pkg.requirements.test|sort(attribute='name') %}
+                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}}{% if not loop.last %} \
+                    {% endif %}
+                    {% endfor %}
+    {% endif %}
+
 }
+{% endif %}
 {% endblock %}
