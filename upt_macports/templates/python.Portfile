@@ -19,6 +19,10 @@ distname            ${python.rootname}-${version}
 python.versions     37
 
 if {${name} ne ${subport}} {
+    ## setuptools is added by default as a build-dependency since this is often the case.
+    ## However, if the package installs a "console_script" or uses "entry_points", setuptools
+    ## should be added as a lib-dependency instead. Please verify from the setup.{py/cfg}
+    ## file that setuptools is indeed used and that the dependency-type is correct.
     depends_build-append \
                     port:py${python.version}-setuptools
     {%- if pkg.upt_pkg.requirements.run|length > 0 %}

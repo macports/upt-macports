@@ -4,19 +4,23 @@ PortSystem          1.0
 {% block portgroup %}
 {% endblock %}
 
-# Portfile generated/maintained using the Universal Packaging Tool (upt)
+## Portfile generated/maintained using the Universal Packaging Tool (upt)
+## Please check out the commented statements and refer to the guide for more information:
+## https://guide.macports.org/#reference.keywords
 {% block nameversion %}
 {% endblock %}
 
-# Please adapt the lines with a "TODO" statement and check the guide for more information:
-# https://guide.macports.org/#reference.keywords
-
-# categories-append # TODO
+# categories-append
 platforms           darwin
-# TODO: uncomment the following line if no architecture-dependent files are installed, otherwise remove
+## uncomment the following line if no architecture-dependent files are installed, otherwise remove
 # supported_archs     noarch
 license             {{ pkg.licenses }}
-# maintainers         {example.org:julesverne @GitHub-handle} openmaintainer # TODO
+## If you would like to keep maintaining this port in the future as described in
+## https://guide.macports.org/chunked/project.contributing.html then
+## please add your contact information (e-mail and GitHub handle),
+## otherwise keep the 'nomaintainer' line
+# maintainers         {example.org:julesverne @github-handle} openmaintainer
+maintainers         nomaintainer
 
 description         {{ pkg.upt_pkg.summary }}
 long_description    ${description}
