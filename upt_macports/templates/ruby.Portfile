@@ -1,0 +1,34 @@
+{% extends 'base.Portfile' %}
+
+{% block portgroup %}
+PortGroup           ruby 1.0
+{% endblock %}
+{% block nameversion %}
+ruby.setup          {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }} gem {} rubygems
+ruby.branches       2.5 2.6
+revision            0
+{% endblock %}
+
+{% block versions %}
+{% if pkg.upt_pkg.requirements.run or pkg.upt_pkg.requirements.test %}
+if {${subport} ne ${name}} {
+    {% if pkg.upt_pkg.requirements.run %}
+    depends_lib-append \
+                    {% for i in pkg.upt_pkg.requirements.run|sort(attribute='name') %}
+                    port:rb${ruby.version}-{{i.name}}{% if not loop.last %} \
+                    {% endif %}
+                    {% endfor %}
+    {% endif %}
+
+
+    {% if pkg.upt_pkg.requirements.test %}
+    depends_test-append \
+                    {% for i in pkg.upt_pkg.requirements.test|sort(attribute='name') %}
+                    port:rb${ruby.version}-{{i.name}}{% if not loop.last %} \
+                    {% endif %}
+                    {% endfor %}
+    {% endif %}
+
+}
+{% endif %}
+{% endblock %}
