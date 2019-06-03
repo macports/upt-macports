@@ -79,7 +79,6 @@ class MacPortsPythonPackage(MacPortsPackage):
 
     @staticmethod
     def _normalized_macports_name(name):
-        name = name.lower()
         return f'py-{name}'
 
 
