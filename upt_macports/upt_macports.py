@@ -135,6 +135,14 @@ class MacPortsPerlPackage(MacPortsPackage):
 class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
 
+    def _pkgname(self):
+        macports_name = self._normalized_macports_name(self.upt_pkg.name)
+        return macports_name
+
+    @staticmethod
+    def _normalized_macports_name(name):
+        return name
+
 
 class MacPortsBackend(upt.Backend):
     name = 'macports'

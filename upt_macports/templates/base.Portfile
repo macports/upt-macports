@@ -12,8 +12,10 @@ PortSystem          1.0
 
 # categories-append
 platforms           darwin
+{% if pkg.upt_pkg.frontend != 'rubygems' -%}
 ## uncomment the following line if no architecture-dependent files are installed, otherwise remove
 # supported_archs     noarch
+{% endif %}
 license             {{ pkg.licenses }}
 ## If you would like to keep maintaining this port in the future as described in
 ## https://guide.macports.org/chunked/project.contributing.html then
@@ -28,9 +30,9 @@ long_description    ${description}
 {% block dist_info %}
 {% endblock -%}
 
-{% if pkg.archive_type == 'unknown' -%}
+{% if pkg.archive_type == 'unknown' and pkg.upt_pkg.frontend != 'rubygems' -%}
 # Detection of archive type failed
-{% elif pkg.archive_type != 'gz' %}
+{% elif pkg.archive_type != 'gz' and pkg.upt_pkg.frontend != 'rubygems' %}
 {{ "use_%-15s yes"|format(pkg.archive_type) }}
 {% endif %}
 
