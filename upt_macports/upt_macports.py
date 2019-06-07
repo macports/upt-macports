@@ -32,8 +32,25 @@ class MacPortsPackage(object):
         with open(filepath) as f:
             spdx2macports = json.loads(f.read())
 
-        return ' '.join([spdx2macports.get(license.spdx_identifier, 'unknown')
-                        for license in self.upt_pkg.licenses]) or 'unknown'
+        if not self.upt_pkg.licenses:
+            self.logger.info('No license found')
+            return 'unknown'
+        licenses = []
+        for license in self.upt_pkg.licenses:
+            try:
+                if license.spdx_identifier == 'unknown':
+                    port_license = 'unknown'
+                    self.logger.warning(f'upt failed to detect license')
+                else:
+                    port_license = spdx2macports[license.spdx_identifier]
+                    self.logger.info(f'Found license {port_license}')
+                licenses.append(port_license)
+            except KeyError:
+                err = f'MacPorts license unknown for {license.spdx_identifier}'
+                licenses.append('unknown # ' + err)
+                self.logger.error(err)
+                self.logger.info('Please report the error at https://github.com/macports/upt-macports') # noqa
+        return ' '.join(licenses)
 
     def _depends(self, phase):
         return self.upt_pkg.requirements.get(phase, [])
