@@ -4,6 +4,8 @@ import jinja2
 import pkg_resources
 import json
 import requests
+import os
+import sys
 
 
 class MacPortsPackage(object):
@@ -13,7 +15,42 @@ class MacPortsPackage(object):
     def create_package(self, upt_pkg, output):
         self.upt_pkg = upt_pkg
         self.logger.info(f'Hello, creating the package')
-        print(self._render_makefile_template())
+        if output is None:
+            print(self._render_makefile_template())
+        else:
+            self._create_output_directories(upt_pkg, output)
+            self._create_portfile()
+
+    def _create_output_directories(self, upt_pkg, output_dir):
+        """Creates the directory layout required"""
+        self.logger.info(f'Creating the directory structure in {output_dir}')
+        upt2macports = {
+            'cpan': 'perl',
+            'pypi': 'python',
+            'rubygems': 'ruby',
+        }
+        try:
+            port_category = upt2macports[self.upt_pkg.frontend]
+        except KeyError:
+            sys.exit(
+                f'Unknown port category for frontend {self.upt_pkg.frontend}')
+        folder_name = self._normalized_macports_folder(upt_pkg.name)
+        self.output_dir = os.path.join(
+            output_dir, port_category, folder_name)
+        try:
+            os.makedirs(self.output_dir, exist_ok=True)
+            self.logger.info(f'Created {self.output_dir}')
+        except PermissionError:
+            sys.exit(f'Cannot create {self.output_dir}: permission denied.')
+
+    def _create_portfile(self):
+        self.logger.info('Creating the Portfile')
+        try:
+            with open(os.path.join(self.output_dir, 'Portfile'), 'x',
+                      encoding='utf-8') as f:
+                f.write(self._render_makefile_template())
+        except FileExistsError:
+            sys.exit(f'Cannot create {self.output_dir}/Portfile: already exists.') # noqa
 
     def _render_makefile_template(self):
         env = jinja2.Environment(
@@ -107,6 +144,11 @@ class MacPortsPythonPackage(MacPortsPackage):
         if pypi_name != self.upt_pkg.name.lower():
             return pypi_name
 
+    @staticmethod
+    def _normalized_macports_folder(name):
+        name = name.lower()
+        return f'py-{name}'
+
 
 class MacPortsNpmPackage(MacPortsPackage):
     template = 'npm.Portfile'
@@ -132,6 +174,11 @@ class MacPortsPerlPackage(MacPortsPackage):
     @staticmethod
     def _normalized_macports_name(name):
         return name.replace('::', '-')
+
+    @staticmethod
+    def _normalized_macports_folder(name):
+        name = name.lower().replace('::', '-')
+        return f'p5-{name}'
 
     def _cpandir(self):
         pkg = self.upt_pkg
@@ -169,6 +216,11 @@ class MacPortsRubyPackage(MacPortsPackage):
     @staticmethod
     def _normalized_macports_name(name):
         return name
+
+    @staticmethod
+    def _normalized_macports_folder(name):
+        name = name.lower()
+        return f'rb-{name}'
 
 
 class MacPortsBackend(upt.Backend):
