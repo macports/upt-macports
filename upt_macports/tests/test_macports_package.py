@@ -73,6 +73,56 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
         self.assertEqual(m_stderr.getvalue(), err)
 
 
+class TestDirectoryCreation(unittest.TestCase):
+    def setUp(self):
+        self.package = MacPortsPackage()
+        self.package.upt_pkg = upt.Package('foo', '42')
+        self.package.upt_pkg.frontend = 'pypi'
+
+    def test_create_directories_output_invalid_frontend(self):
+        self.package.upt_pkg.frontend = 'frontend'
+        with self.assertRaises(SystemExit):
+            self.package._create_output_directories(self.package.upt_pkg,
+                                                    '/ports/')
+
+    @mock.patch('os.makedirs')
+    @mock.patch.object(MacPortsPackage, '_normalized_macports_folder',
+                       create=True, return_value='py-foo')
+    def test_create_directories_output(self, folder_name, m_mkdir):
+        self.package._create_output_directories(self.package.upt_pkg,
+                                                '/ports/')
+        m_mkdir.assert_called_with('/ports/python/py-foo', exist_ok=True)
+
+    @mock.patch('os.makedirs', side_effect=PermissionError)
+    @mock.patch.object(MacPortsPackage, '_normalized_macports_folder',
+                       create=True, return_value='py-foo')
+    def test_create_directories_permission_error(self, folder_name, m_mkdir):
+        with self.assertRaises(SystemExit):
+            self.package._create_output_directories(self.package.upt_pkg,
+                                                    '/ports/')
+
+
+class TestFileCreation(unittest.TestCase):
+    def setUp(self):
+        self.package = MacPortsPackage()
+        self.package.output_dir = '/outdir'
+        self.package.upt_pkg = upt.Package('foo', '42')
+
+    @mock.patch('builtins.open', new_callable=mock.mock_open)
+    def test_portfile_creation(self, m_open):
+        fn = 'upt_macports.upt_macports.MacPortsPackage._render_makefile_template' # noqa
+        with mock.patch(fn, return_value='Portfile content'):
+            self.package._create_portfile()
+            m_open.assert_called_once_with('/outdir/Portfile', 'x',
+                                           encoding='utf-8')
+            m_open().write.assert_called_once_with('Portfile content')
+
+    @mock.patch('builtins.open', side_effect=FileExistsError)
+    def test_portfile_file_exists(self, m_open):
+        with self.assertRaises(SystemExit):
+            self.package._create_portfile()
+
+
 class TestMacPortsPackageArchiveType(unittest.TestCase):
     def setUp(self):
         self.package = MacPortsPackage()
