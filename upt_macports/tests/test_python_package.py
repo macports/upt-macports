@@ -11,7 +11,7 @@ class TestMacPortsPythonPackage(unittest.TestCase):
         self.package.upt_pkg = upt.Package('test-pkg', '13.37')
 
     def test_pkgname(self):
-        expected = ['py-foo', 'py-py-foo', 'py-pyfoo', 'py-pyFoo']
+        expected = ['py-foo', 'py-py-foo', 'py-pyfoo', 'py-pyfoo']
         names = ['foo', 'py-foo', 'pyfoo', 'pyFoo']
         for (name, expected_name) in zip(names, expected):
             self.package.upt_pkg = upt.Package(name, '13.37')
