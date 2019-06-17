@@ -97,7 +97,13 @@ class MacPortsPythonPackage(MacPortsPackage):
 
     @staticmethod
     def _normalized_macports_name(name):
+        name = name.lower()
         return f'py-{name}'
+
+    def _python_root_name(self):
+        pypi_name = self.upt_pkg.get_archive().filename.split('-'+self.upt_pkg.version)[0] # noqa
+        if pypi_name != self.upt_pkg.name.lower():
+            return pypi_name
 
 
 class MacPortsNpmPackage(MacPortsPackage):

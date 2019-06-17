@@ -5,6 +5,9 @@ PortGroup           python 1.0
 {% endblock %}
 {% block nameversion %}
 name                {{ pkg._pkgname() }}
+{% if pkg._python_root_name() %}
+python.rootname     {{ pkg._python_root_name() }}
+{% endif %}
 version             {{ pkg.upt_pkg.version }}
 revision            0
 {% endblock %}
