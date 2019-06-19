@@ -5,6 +5,7 @@ import pkg_resources
 import json
 import requests
 import os
+import subprocess
 import sys
 
 
@@ -14,7 +15,7 @@ class MacPortsPackage(object):
 
     def create_package(self, upt_pkg, output):
         self.upt_pkg = upt_pkg
-        self.logger.info(f'Hello, creating the package')
+        self.logger.info(f'Creating MacPorts package for {self.upt_pkg.name}')
         if output is None:
             print(self._render_makefile_template())
         else:
@@ -227,20 +228,53 @@ class MacPortsRubyPackage(MacPortsPackage):
 
 
 class MacPortsBackend(upt.Backend):
+    def __init__(self):
+        self.logger = logging.getLogger('upt')
+
     name = 'macports'
+    pkg_classes = {
+        'pypi': MacPortsPythonPackage,
+        'cpan': MacPortsPerlPackage,
+        'rubygems': MacPortsRubyPackage,
+        'npm': MacPortsNpmPackage
+    }
 
     def create_package(self, upt_pkg, output=None):
-        pkg_classes = {
-            'pypi': MacPortsPythonPackage,
-            'cpan': MacPortsPerlPackage,
-            'rubygems': MacPortsRubyPackage,
-            'npm': MacPortsNpmPackage
-        }
-
         try:
-            pkg_cls = pkg_classes[upt_pkg.frontend]
+            self.frontend = upt_pkg.frontend
+            pkg_cls = self.pkg_classes[upt_pkg.frontend]
         except KeyError:
             raise upt.UnhandledFrontendError(self.name, upt_pkg.frontend)
-
         packager = pkg_cls()
         packager.create_package(upt_pkg, output)
+
+    def package_versions(self, name):
+        try:
+            port_name = self.pkg_classes[
+                self.frontend]._normalized_macports_folder(name)
+        except KeyError:
+            raise upt.UnhandledFrontendError(self.name, self.upt_pkg.frontend)
+
+        self.logger.info(f'Checking MacPorts tree for port {port_name}')
+        cmd = f'port info --version {port_name}'
+        port = subprocess.getoutput(cmd)
+        if port.startswith('Error'):
+            self.logger.info(f'{port_name} not found in MacPorts tree')
+            return []
+        elif port.startswith('version'):
+            curr_ver = port.split()[1]
+            self.logger.info(
+                f'Current MacPorts Version for {port_name} is {curr_ver}')
+            return [curr_ver]
+        elif port.startswith('Warning'):
+            self.logger.warning(
+                'port definitions are more than two weeks old, '
+                'consider updating them by running \'port selfupdate\'.')
+            curr_ver = port.split('version: ')[1]
+            self.logger.info(
+                f'Current MacPorts Version for {port_name} is {curr_ver}')
+            return [curr_ver]
+        else:
+            sys.exit(f'The command "{cmd}" failed. '
+                     'Please make sure you have MacPorts installed '
+                     'and/or your PATH is set-up correctly.')
