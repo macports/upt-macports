@@ -21,7 +21,7 @@ PortSystem          1.0
 
 # categories-append
 platforms           darwin
-{% if pkg.upt_pkg.frontend != 'rubygems' -%}
+{% if pkg.upt_pkg.frontend != 'rubygems' and pkg.upt_pkg.frontend != 'hackage' -%}
 ## uncomment the following line if no architecture-dependent files are installed, otherwise remove
 # supported_archs     noarch
 {% endif %}

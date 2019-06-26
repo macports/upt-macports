@@ -227,6 +227,28 @@ class MacPortsRubyPackage(MacPortsPackage):
         return f'rb${{ruby.suffix}}-{req.name.lower()}'
 
 
+class MacPortsHackagePackage(MacPortsPackage):
+    template = 'hackage.Portfile'
+    archive_format = upt.ArchiveType.SOURCE_TARGZ
+    category = 'devel'
+
+    def _pkgname(self):
+        macports_name = self._normalized_macports_name(self.upt_pkg.name)
+        return macports_name
+
+    @staticmethod
+    def _normalized_macports_name(name):
+        return name
+
+    @staticmethod
+    def _normalized_macports_folder(name):
+        name = name.lower()
+        return f'hs-{name}'
+
+    def jinja2_reqformat(self, req):
+        return f'hs-{req.name.lower()}'
+
+
 class MacPortsBackend(upt.Backend):
     def __init__(self):
         self.logger = logging.getLogger('upt')
@@ -236,6 +258,7 @@ class MacPortsBackend(upt.Backend):
         'pypi': MacPortsPythonPackage,
         'cpan': MacPortsPerlPackage,
         'rubygems': MacPortsRubyPackage,
+        'hackage': MacPortsHackagePackage,
         'npm': MacPortsNpmPackage
     }
 
