@@ -80,16 +80,22 @@ class TestMacPortsPackageArchiveType(unittest.TestCase):
 
     def test_no_archive(self):
         self.package.upt_pkg.archives = []
+        self.package.upt_pkg.frontend = 'frontend'
+        self.package.archive_format = upt.ArchiveType.SOURCE_TARGZ
         expected = 'unknown'
         self.assertEqual(self.package.archive_type, expected)
 
     def test_known_archive(self):
         self.package.upt_pkg.archives = [upt.Archive("url.co/dir/file.tar.gz")]
+        self.package.upt_pkg.frontend = 'frontend'
+        self.package.archive_format = upt.ArchiveType.SOURCE_TARGZ
         expected = 'gz'
         self.assertEqual(self.package.archive_type, expected)
 
     def test_unknown_archive(self):
         self.package.upt_pkg.archives = [upt.Archive("url.co/dir/file.rar")]
+        self.package.upt_pkg.frontend = 'frontend'
+        self.package.archive_format = upt.ArchiveType.RUBYGEM
         expected = 'unknown'
         self.assertEqual(self.package.archive_type, expected)
 

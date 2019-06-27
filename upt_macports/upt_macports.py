@@ -79,7 +79,8 @@ class MacPortsPackage(object):
             'xz': 'xz'
         }
         try:
-            archive_name = self.upt_pkg.get_archive().filename
+            archive_name = self.upt_pkg.get_archive(
+                self.archive_format).filename
             archive_type = archive_name.split('.')[-1]
             return archive_keyword.get(archive_type, 'unknown')
 
@@ -90,6 +91,7 @@ class MacPortsPackage(object):
 
 class MacPortsPythonPackage(MacPortsPackage):
     template = 'python.Portfile'
+    archive_format = upt.ArchiveType.SOURCE_TARGZ
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)
@@ -121,6 +123,7 @@ class MacPortsNpmPackage(MacPortsPackage):
 
 class MacPortsPerlPackage(MacPortsPackage):
     template = 'perl.Portfile'
+    archive_format = upt.ArchiveType.SOURCE_TARGZ
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)
@@ -157,6 +160,7 @@ class MacPortsPerlPackage(MacPortsPackage):
 
 class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
+    archive_format = upt.ArchiveType.RUBYGEM
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)

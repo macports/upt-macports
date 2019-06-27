@@ -24,7 +24,7 @@ license             {{ pkg.licenses }}
 # maintainers         {example.org:julesverne @github-handle} openmaintainer
 maintainers         nomaintainer
 
-description         {{ pkg.upt_pkg.summary }}
+description         {{ pkg.upt_pkg.summary|trim|replace('\n',' \\\n')|indent(20, false) }}
 long_description    ${description}
 
 {% block dist_info %}
