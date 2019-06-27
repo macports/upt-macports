@@ -16,11 +16,20 @@ revision            0
 homepage            {{ pkg.upt_pkg.homepage }}
 master_sites        pypi:[string index ${python.rootname} 0]/${python.rootname}
 distname            ${python.rootname}-${version}
+{% if pkg.archive_type not in ['gz', 'unknown'] -%} {{ "use_%-15s yes"|format(pkg.archive_type) }}
+
+{% else %}
+
+{% endif %}
 {% endblock %}
 
 {% block versions %}
+
 python.versions     37
 
+{% endblock %}
+
+{% block dependencies %}
 if {${name} ne ${subport}} {
     ## setuptools is added by default as a build-dependency since this is often the case.
     ## However, if the package installs a "console_script" or uses "entry_points", setuptools
@@ -28,26 +37,21 @@ if {${name} ne ${subport}} {
     ## file that setuptools is indeed used and that the dependency-type is correct.
     depends_build-append \
                     port:py${python.version}-setuptools
-    {%- if pkg.upt_pkg.requirements.run|length > 0 %}
+
+    {%- if pkg.upt_pkg.requirements.run %}
 
 
-    depends_lib-append \
-                    {% for i in pkg.upt_pkg.requirements.run|sort(attribute='name') %}
-                    port:py${python.version}-{{i.name}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
-    {%- if pkg.upt_pkg.requirements.test|length > 0 %}
+    {{ depends('lib', pkg.upt_pkg.requirements.run) -}}
+    {% endif -%}
+
+    {%- if pkg.upt_pkg.requirements.test %}
 
 
-    depends_test-append \
-                    {% for i in pkg.upt_pkg.requirements.test|sort(attribute='name') %}
-                    port:py${python.version}-{{i.name}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
+    {{ depends('test', pkg.upt_pkg.requirements.test) -}}
+    {% endif -%}
 
+    {{'
 
-    livecheck.type  none
+    livecheck.type  none'}}
 }
-{% endblock %}
+{%- endblock -%}

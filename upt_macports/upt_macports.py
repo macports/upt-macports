@@ -59,6 +59,7 @@ class MacPortsPackage(object):
             lstrip_blocks=True,
             keep_trailing_newline=True,
         )
+        env.filters['reqformat'] = self.jinja2_reqformat
         template = env.get_template(self.template)
         return template.render(pkg=self)
 
@@ -149,6 +150,9 @@ class MacPortsPythonPackage(MacPortsPackage):
         name = name.lower()
         return f'py-{name}'
 
+    def jinja2_reqformat(self, req):
+        return f'py${{python.version}}-{req.name.lower()}'
+
 
 class MacPortsNpmPackage(MacPortsPackage):
     template = 'npm.Portfile'
@@ -179,6 +183,9 @@ class MacPortsPerlPackage(MacPortsPackage):
     def _normalized_macports_folder(name):
         name = name.lower().replace('::', '-')
         return f'p5-{name}'
+
+    def jinja2_reqformat(self, req):
+        return f'p${{perl5.major}}-{self._normalized_macports_name(req.name).lower()}' # noqa
 
     def _cpandir(self):
         pkg = self.upt_pkg
@@ -221,6 +228,9 @@ class MacPortsRubyPackage(MacPortsPackage):
     def _normalized_macports_folder(name):
         name = name.lower()
         return f'rb-{name}'
+
+    def jinja2_reqformat(self, req):
+        return f'rb${{ruby.suffix}}-{req.name.lower()}'
 
 
 class MacPortsBackend(upt.Backend):

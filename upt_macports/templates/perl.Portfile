@@ -9,36 +9,42 @@ perl5.setup         {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}{{ pkg._cpandi
 revision            0
 {% endblock %}
 
-{% block versions %}
-{%- if pkg.upt_pkg.requirements.run or pkg.upt_pkg.requirements.test or pkg.upt_pkg.requirements.build or pkg.upt_pkg.requirements.config %}
-if {${perl5.major} != ""} {
-    {%- if pkg.upt_pkg.requirements.config or pkg.upt_pkg.requirements.build %}
+{% block dist_info %}
+{% if pkg.archive_type not in ['gz', 'unknown'] -%} {{ "use_%-15s yes"|format(pkg.archive_type) }}
 
-    depends_build-append \
-                    {% for i in (pkg.upt_pkg.requirements.build + pkg.upt_pkg.requirements.config)|sort(attribute='name')|unique(attribute='name') %}
-                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
-
-    {% if pkg.upt_pkg.requirements.run %}
-
-    depends_lib-append \
-                    {% for i in pkg.upt_pkg.requirements.run|sort(attribute='name') %}
-                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
-
-    {% if pkg.upt_pkg.requirements.test %}
-
-    depends_test-append \
-                    {% for i in pkg.upt_pkg.requirements.test|sort(attribute='name') %}
-                    port:p${perl5.major}-{{i.name|replace('::','-')|lower}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
-
-}
-{% endif %}
+{% endif -%}
 {% endblock %}
+
+{% block dependencies %}
+{%- if pkg.upt_pkg.requirements.run or pkg.upt_pkg.requirements.test or pkg.upt_pkg.requirements.build or pkg.upt_pkg.requirements.config %}
+
+if {${perl5.major} != ""} {
+    {% if pkg.upt_pkg.requirements.config and pkg.upt_pkg.requirements.build %}
+    {{ depends('build', pkg.upt_pkg.requirements.build + pkg.upt_pkg.requirements.config) -}}
+    {% elif pkg.upt_pkg.requirements.config %}
+    {{ depends('build', pkg.upt_pkg.requirements.config) -}}
+    {% elif pkg.upt_pkg.requirements.build %}
+    {{ depends('build', pkg.upt_pkg.requirements.build) -}}
+    {% endif %}
+
+    {%- if pkg.upt_pkg.requirements.run %}
+    {%- if pkg.upt_pkg.requirements.build or pkg.upt_pkg.requirements.config %}
+
+
+    {{ depends('lib', pkg.upt_pkg.requirements.run) -}}
+    {%- else %}
+    {{ depends('lib', pkg.upt_pkg.requirements.run) -}}
+    {%- endif -%}
+    {%- endif -%}
+
+    {%- if pkg.upt_pkg.requirements.test %}
+
+
+    {{ depends('test', pkg.upt_pkg.requirements.test) -}}
+    {%- endif -%}
+
+{% raw %}
+}
+{%- endraw -%}
+{%- endif -%}
+{%- endblock -%}
