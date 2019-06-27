@@ -1,3 +1,12 @@
+{% macro depends(kind, deps) %}
+{% if deps %}
+depends_{{ kind }}-append \
+  {% for dep in deps | unique(attribute='name') | sort(attribute='name') %}
+                    port:{{ dep|reqformat }} {%- if not loop.last %} \
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% endmacro %}
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem          1.0
@@ -28,17 +37,12 @@ description         {{ pkg.upt_pkg.summary|trim|replace('\n',' \\\n')|indent(20,
 long_description    ${description}
 
 {% block dist_info %}
-{% endblock -%}
-
-{% if pkg.archive_type == 'unknown' and pkg.upt_pkg.frontend != 'rubygems' -%}
-# Detection of archive type failed
-{% elif pkg.archive_type != 'gz' and pkg.upt_pkg.frontend != 'rubygems' %}
-{{ "use_%-15s yes"|format(pkg.archive_type) }}
-{% endif %}
-
+{% endblock %}
 checksums           sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
                     rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
                     size    {{ pkg.upt_pkg.archives[0].size }}
-
 {% block versions %}
+{% endblock -%}
+
+{% block dependencies %}
 {% endblock %}

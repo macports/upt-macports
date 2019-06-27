@@ -9,26 +9,27 @@ ruby.setup          {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }} gem {} rubyge
 revision            0
 {% endblock %}
 
-{% block versions %}
-{% if pkg.upt_pkg.requirements.run or pkg.upt_pkg.requirements.test %}
+{% block dependencies %}
+
 if {${subport} ne ${name}} {
-    {% if pkg.upt_pkg.requirements.run %}
-    depends_lib-append \
-                    {% for i in pkg.upt_pkg.requirements.run|sort(attribute='name') %}
-                    port:rb${ruby.suffix}-{{i.name}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
+    {{ depends('lib', pkg.upt_pkg.requirements.run) -}}
+
+    {%- if pkg.upt_pkg.requirements.test -%}
+    {%- if pkg.upt_pkg.requirements.run %}
+
+
+    {{ depends('test', pkg.upt_pkg.requirements.test) -}}
+    {%- else -%}
+    {{ depends('test', pkg.upt_pkg.requirements.test) -}}
+    {%- endif -%}
+    {%- endif -%}
+
+    {%- if (pkg.upt_pkg.requirements.run or pkg.upt_pkg.requirements.test) %}
+
+
+    livecheck.type  none
+    {% else -%}
+    livecheck.type  none
     {% endif %}
-
-
-    {% if pkg.upt_pkg.requirements.test %}
-    depends_test-append \
-                    {% for i in pkg.upt_pkg.requirements.test|sort(attribute='name') %}
-                    port:rb${ruby.suffix}-{{i.name}}{% if not loop.last %} \
-                    {% endif %}
-                    {% endfor %}
-    {% endif %}
-
 }
-{% endif %}
-{% endblock %}
+{%- endblock -%}
