@@ -17,6 +17,13 @@ class TestMacPortsRubyPackage(unittest.TestCase):
             self.package.upt_pkg = upt.Package(name, '13.37')
             self.assertEqual(self.package._pkgname(), expected_name)
 
+    def test_folder_name(self):
+        expected = ['rb-foo', 'rb-foo', 'rb-foo-bar', 'rb-foo-bar']
+        names = ['Foo', 'foo', 'Foo-bar', 'foo-bar']
+        for (name, expected_name) in zip(names, expected):
+            self.assertEqual(
+                self.package._normalized_macports_folder(name), expected_name)
+
 
 if __name__ == '__main__':
     unittest.main()

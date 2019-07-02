@@ -22,6 +22,13 @@ class TestMacPortsPerlPackage(unittest.TestCase):
             self.package.upt_pkg = upt.Package(name, '13.37')
             self.assertEqual(self.package._pkgname(), expected_name)
 
+    def test_folder_name(self):
+        expected = ['p5-foo-bar', 'p5-foo-bar', 'p5-foo-bar', 'p5-foo-bar']
+        names = ['Foo::bar', 'foo::bar', 'Foo-bar', 'foo-bar']
+        for (name, expected_name) in zip(names, expected):
+            self.assertEqual(
+                self.package._normalized_macports_folder(name), expected_name)
+
     @requests_mock.mock()
     def test_missing_dist_pos1(self, requests):
         expected = ' ../../authors/id/F/FO/FOOBAR/'
