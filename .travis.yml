@@ -6,5 +6,9 @@ python:
 
 install:
     - pip install tox
+    - pip install codecov
 
 script: tox -epy37,flake8
+
+after_success:
+  - codecov
