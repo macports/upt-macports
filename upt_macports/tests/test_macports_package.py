@@ -78,12 +78,7 @@ class TestDirectoryCreation(unittest.TestCase):
         self.package = MacPortsPackage()
         self.package.upt_pkg = upt.Package('foo', '42')
         self.package.upt_pkg.frontend = 'pypi'
-
-    def test_create_directories_output_invalid_frontend(self):
-        self.package.upt_pkg.frontend = 'frontend'
-        with self.assertRaises(SystemExit):
-            self.package._create_output_directories(self.package.upt_pkg,
-                                                    '/ports/')
+        self.package.category = 'python'
 
     @mock.patch('os.makedirs')
     @mock.patch.object(MacPortsPackage, '_normalized_macports_folder',

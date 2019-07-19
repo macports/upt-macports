@@ -24,19 +24,9 @@ class MacPortsPackage(object):
     def _create_output_directories(self, upt_pkg, output_dir):
         """Creates the directory layout required"""
         self.logger.info(f'Creating the directory structure in {output_dir}')
-        upt2macports = {
-            'cpan': 'perl',
-            'pypi': 'python',
-            'rubygems': 'ruby',
-        }
-        try:
-            port_category = upt2macports[self.upt_pkg.frontend]
-        except KeyError:
-            sys.exit(
-                f'Unknown port category for frontend {self.upt_pkg.frontend}')
         folder_name = self._normalized_macports_folder(upt_pkg.name)
         self.output_dir = os.path.join(
-            output_dir, port_category, folder_name)
+            output_dir, self.category, folder_name)
         try:
             os.makedirs(self.output_dir, exist_ok=True)
             self.logger.info(f'Created {self.output_dir}')
@@ -130,6 +120,7 @@ class MacPortsPackage(object):
 class MacPortsPythonPackage(MacPortsPackage):
     template = 'python.Portfile'
     archive_format = upt.ArchiveType.SOURCE_TARGZ
+    category = 'python'
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)
@@ -170,6 +161,7 @@ class MacPortsNpmPackage(MacPortsPackage):
 class MacPortsPerlPackage(MacPortsPackage):
     template = 'perl.Portfile'
     archive_format = upt.ArchiveType.SOURCE_TARGZ
+    category = 'perl'
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)
@@ -215,6 +207,7 @@ class MacPortsPerlPackage(MacPortsPackage):
 class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
     archive_format = upt.ArchiveType.RUBYGEM
+    category = 'ruby'
 
     def _pkgname(self):
         macports_name = self._normalized_macports_name(self.upt_pkg.name)
