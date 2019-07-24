@@ -16,11 +16,12 @@ class MacPortsPackage(object):
     def create_package(self, upt_pkg, output):
         self.upt_pkg = upt_pkg
         self.logger.info(f'Creating MacPorts package for {self.upt_pkg.name}')
+        portfile_content = self._render_makefile_template()
         if output is None:
-            print(self._render_makefile_template())
+            print(portfile_content)
         else:
             self._create_output_directories(upt_pkg, output)
-            self._create_portfile()
+            self._create_portfile(portfile_content)
 
     def _create_output_directories(self, upt_pkg, output_dir):
         """Creates the directory layout required"""
@@ -34,12 +35,12 @@ class MacPortsPackage(object):
         except PermissionError:
             sys.exit(f'Cannot create {self.output_dir}: permission denied.')
 
-    def _create_portfile(self):
+    def _create_portfile(self, portfile_content):
         self.logger.info('Creating the Portfile')
         try:
             with open(os.path.join(self.output_dir, 'Portfile'), 'x',
                       encoding='utf-8') as f:
-                f.write(self._render_makefile_template())
+                f.write(portfile_content)
         except FileExistsError:
             sys.exit(f'Cannot create {self.output_dir}/Portfile: already exists.') # noqa
 

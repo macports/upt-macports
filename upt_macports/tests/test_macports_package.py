@@ -96,6 +96,17 @@ class TestDirectoryCreation(unittest.TestCase):
             self.package._create_output_directories(self.package.upt_pkg,
                                                     '/ports/')
 
+    @mock.patch.object(MacPortsPackage, '_render_makefile_template',
+                       side_effect=PermissionError)
+    @mock.patch.object(MacPortsPackage, '_create_output_directories')
+    @mock.patch.object(MacPortsPackage, '_create_portfile')
+    def test_render_makefile_error(self, portfile, outdir, render):
+        with self.assertRaises(PermissionError):
+            self.package.create_package(mock.Mock(), 'path')
+        render.assert_called()
+        outdir.assert_not_called()
+        portfile.assert_not_called()
+
 
 class TestFileCreation(unittest.TestCase):
     def setUp(self):
@@ -107,7 +118,7 @@ class TestFileCreation(unittest.TestCase):
     def test_portfile_creation(self, m_open):
         fn = 'upt_macports.upt_macports.MacPortsPackage._render_makefile_template' # noqa
         with mock.patch(fn, return_value='Portfile content'):
-            self.package._create_portfile()
+            self.package._create_portfile('Portfile content')
             m_open.assert_called_once_with('/outdir/Portfile', 'x',
                                            encoding='utf-8')
             m_open().write.assert_called_once_with('Portfile content')
@@ -115,7 +126,7 @@ class TestFileCreation(unittest.TestCase):
     @mock.patch('builtins.open', side_effect=FileExistsError)
     def test_portfile_file_exists(self, m_open):
         with self.assertRaises(SystemExit):
-            self.package._create_portfile()
+            self.package._create_portfile('Portfile content')
 
 
 class TestMacPortsPackageArchiveType(unittest.TestCase):
