@@ -38,8 +38,8 @@ long_description    ${description}
 
 {% block dist_info %}
 {% endblock %}
-checksums           sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
-                    rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
+checksums           rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
+                    sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
                     size    {{ pkg.upt_pkg.archives[0].size }}
 {% block versions %}
 {% endblock -%}
