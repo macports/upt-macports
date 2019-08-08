@@ -7,6 +7,7 @@ import requests
 import os
 import subprocess
 import sys
+from packaging.specifiers import SpecifierSet
 
 
 class MacPortsPackage(object):
@@ -256,3 +257,44 @@ class MacPortsBackend(upt.Backend):
             sys.exit(f'The command "{cmd}" failed. '
                      'Please make sure you have MacPorts installed '
                      'and/or your PATH is set-up correctly.')
+
+    @staticmethod
+    def standardize_CPAN_version(version):
+        """Parse CPAN version and return a normalized, dotted-decimal form.
+
+        The resulting version is identical to the MacPorts conversion as
+        performed by the perl5 PortGroup.
+        It is almost the same as the suggested conversion using:
+          perl -Mversion -e 'print version->parse("<VERSION>")->normal'
+        with the exception of version numbers that do not contain a "dot".
+
+        """
+        version_strip = version.lstrip('v')
+        version_split = version_strip.split('.')
+
+        # no or more than 1 'dots': no conversion required
+        if len(version_split) != 2:
+            return version_strip
+
+        # conversion required
+        std_version = version_split[0]
+        fractional = version_split[1]
+
+        index = 0
+        while index < len(fractional) or index < 6:
+            sub = fractional[index:index+3]
+            if len(sub) < 3:
+                sub += '0'*(3-len(sub))
+            std_version += '.' + str(int(sub))
+            index += 3
+
+        return std_version
+
+    def needs_requirement(self, req, phase):
+        if self.frontend == 'cpan' and req.specifier:
+            s = SpecifierSet(req.specifier)
+            req.specifier = ', '.join(
+                [dep.operator +
+                 self.standardize_CPAN_version(dep.version) for dep in s])
+
+        return super().needs_requirement(req, phase)
