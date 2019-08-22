@@ -21,7 +21,7 @@ PortSystem          1.0
 
 # categories-append
 platforms           darwin
-{% if pkg.upt_pkg.frontend != 'rubygems' -%}
+{% if pkg.upt_pkg.frontend != 'rubygems' and pkg.upt_pkg.frontend != 'hackage' -%}
 ## uncomment the following line if no architecture-dependent files are installed, otherwise remove
 # supported_archs     noarch
 {% endif %}
@@ -33,7 +33,7 @@ license             {{ pkg.licenses }}
 # maintainers         {example.org:julesverne @github-handle} openmaintainer
 maintainers         nomaintainer
 
-description         {{ pkg.upt_pkg.summary|trim|replace('\n',' \\\n')|indent(20, false) }}
+description         {{ pkg.upt_pkg.summary|trim|replace('\n',' \\\n')|replace('"','\"')|indent(20, false) }}
 long_description    ${description}
 
 {% block dist_info %}

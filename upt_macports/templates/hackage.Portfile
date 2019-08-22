@@ -1,0 +1,19 @@
+{% extends 'base.Portfile' %}
+
+{% block portgroup %}
+PortGroup           haskell 1.0
+{% endblock %}
+{% block nameversion %}
+haskell.setup       {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}
+revision            0
+{% endblock %}
+
+{% block dist_info %}
+homepage            {{ pkg.upt_pkg.homepage }}
+
+{% endblock %}
+
+{% block versions %}
+
+{{ depends('lib', pkg.upt_pkg.requirements.run) }}
+{% endblock %}
