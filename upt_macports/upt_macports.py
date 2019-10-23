@@ -118,15 +118,14 @@ class MacPortsPackage(object):
             self.logger.error('Could not determine the type of the source archive') # noqa
             return 'unknown'
 
+    def _pkgname(self):
+        return self._normalized_macports_name(self.upt_pkg.name)
+
 
 class MacPortsPythonPackage(MacPortsPackage):
     template = 'python.Portfile'
     archive_format = upt.ArchiveType.SOURCE_TARGZ
     category = 'python'
-
-    def _pkgname(self):
-        macports_name = self._normalized_macports_name(self.upt_pkg.name)
-        return f'{macports_name}'
 
     @staticmethod
     def _normalized_macports_name(name):
@@ -150,10 +149,6 @@ class MacPortsPythonPackage(MacPortsPackage):
 class MacPortsNpmPackage(MacPortsPackage):
     template = 'npm.Portfile'
 
-    def _pkgname(self):
-        macports_name = self._normalized_macports_name(self.upt_pkg.name)
-        return f'{macports_name}'
-
     @staticmethod
     def _normalized_macports_name(name):
         name = name.lower()
@@ -164,10 +159,6 @@ class MacPortsPerlPackage(MacPortsPackage):
     template = 'perl.Portfile'
     archive_format = upt.ArchiveType.SOURCE_TARGZ
     category = 'perl'
-
-    def _pkgname(self):
-        macports_name = self._normalized_macports_name(self.upt_pkg.name)
-        return macports_name
 
     @staticmethod
     def _normalized_macports_name(name):
@@ -210,10 +201,6 @@ class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
     archive_format = upt.ArchiveType.RUBYGEM
     category = 'ruby'
-
-    def _pkgname(self):
-        macports_name = self._normalized_macports_name(self.upt_pkg.name)
-        return macports_name
 
     @staticmethod
     def _normalized_macports_name(name):
