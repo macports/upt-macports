@@ -146,15 +146,6 @@ class MacPortsPythonPackage(MacPortsPackage):
         return f'py${{python.version}}-{req.name.lower()}'
 
 
-class MacPortsNpmPackage(MacPortsPackage):
-    template = 'npm.Portfile'
-
-    @staticmethod
-    def _normalized_macports_name(name):
-        name = name.lower()
-        return f'{name}'
-
-
 class MacPortsPerlPackage(MacPortsPackage):
     template = 'perl.Portfile'
     archive_format = upt.ArchiveType.SOURCE_TARGZ
@@ -224,7 +215,6 @@ class MacPortsBackend(upt.Backend):
         'pypi': MacPortsPythonPackage,
         'cpan': MacPortsPerlPackage,
         'rubygems': MacPortsRubyPackage,
-        'npm': MacPortsNpmPackage
     }
 
     def create_package(self, upt_pkg, output=None):
