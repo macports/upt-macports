@@ -43,6 +43,11 @@ class TestMacPortsPythonPackage(unittest.TestCase):
                 self.assertEqual(
                     self.package._python_root_name(), None)
 
+    def test_jinja2_reqformat(self):
+        req = upt.PackageRequirement('Require')
+        self.assertEqual(self.package.jinja2_reqformat(req),
+                         'py${python.version}-require')
+
 
 if __name__ == '__main__':
     unittest.main()
