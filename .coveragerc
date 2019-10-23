@@ -3,4 +3,4 @@ branch = True
 
 [report]
 omit = upt_macports/tests/*
-fail_under = 60
+fail_under = 90
