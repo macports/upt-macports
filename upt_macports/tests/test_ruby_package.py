@@ -24,6 +24,11 @@ class TestMacPortsRubyPackage(unittest.TestCase):
             self.assertEqual(
                 self.package._normalized_macports_folder(name), expected_name)
 
+    def test_jinja2_reqformat(self):
+        req = upt.PackageRequirement('Require')
+        self.assertEqual(self.package.jinja2_reqformat(req),
+                         'rb${ruby.suffix}-require')
+
 
 if __name__ == '__main__':
     unittest.main()

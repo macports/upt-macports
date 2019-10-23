@@ -47,6 +47,11 @@ class TestMacPortsPerlPackage(unittest.TestCase):
         self.package.upt_pkg.archives = []
         self.assertEqual(self.package._cpandir(), expected)
 
+    def test_jinja2_reqformat(self):
+        req = upt.PackageRequirement('Require')
+        self.assertEqual(self.package.jinja2_reqformat(req),
+                         'p${perl5.major}-require')
+
 
 if __name__ == '__main__':
     unittest.main()
