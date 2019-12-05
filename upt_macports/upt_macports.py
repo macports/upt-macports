@@ -13,7 +13,7 @@ class MacPortsPackage(object):
     def __init__(self):
         self.logger = logging.getLogger('upt')
 
-    def create_package(self, upt_pkg, output):
+    def create_package(self, upt_pkg, output, overwrite=False):
         self.upt_pkg = upt_pkg
         self.logger.info(f'Creating MacPorts package for {self.upt_pkg.name}')
         portfile_content = self._render_makefile_template()
@@ -21,7 +21,7 @@ class MacPortsPackage(object):
             print(portfile_content)
         else:
             self._create_output_directories(upt_pkg, output)
-            self._create_portfile(portfile_content)
+            self._create_portfile(portfile_content, overwrite)
 
     def _create_output_directories(self, upt_pkg, output_dir):
         """Creates the directory layout required"""
@@ -35,10 +35,11 @@ class MacPortsPackage(object):
         except PermissionError:
             sys.exit(f'Cannot create {self.output_dir}: permission denied.')
 
-    def _create_portfile(self, portfile_content):
+    def _create_portfile(self, portfile_content, overwrite=False):
         self.logger.info('Creating the Portfile')
         try:
-            with open(os.path.join(self.output_dir, 'Portfile'), 'x',
+            mode = 'w' if overwrite else 'x'
+            with open(os.path.join(self.output_dir, 'Portfile'), mode,
                       encoding='utf-8') as f:
                 f.write(portfile_content)
         except FileExistsError:
@@ -217,14 +218,14 @@ class MacPortsBackend(upt.Backend):
         'rubygems': MacPortsRubyPackage,
     }
 
-    def create_package(self, upt_pkg, output=None):
+    def create_package(self, upt_pkg, output=None, overwrite=False):
         try:
             self.frontend = upt_pkg.frontend
             pkg_cls = self.pkg_classes[upt_pkg.frontend]
         except KeyError:
             raise upt.UnhandledFrontendError(self.name, upt_pkg.frontend)
         packager = pkg_cls()
-        packager.create_package(upt_pkg, output)
+        packager.create_package(upt_pkg, output, overwrite)
 
     def package_versions(self, name):
         try:
