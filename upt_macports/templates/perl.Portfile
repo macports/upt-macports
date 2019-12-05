@@ -9,6 +9,10 @@ perl5.setup         {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}{{ pkg._cpandi
 revision            0
 {% endblock %}
 
+{% block descriptions %}
+{{ super() }}
+{% endblock %}
+
 {% block dist_info %}
 {% if pkg.archive_type not in ['gz', 'unknown'] -%} {{ "use_%-15s yes"|format(pkg.archive_type) }}
 

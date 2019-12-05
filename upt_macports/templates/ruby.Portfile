@@ -1,4 +1,5 @@
 {% extends 'base.Portfile' %}
+{% set long_description = pkg.upt_pkg.description |trim |replace('\n',' \\\n') |replace('\"','\\\"') |indent(20, false) %}
 
 {% block portgroup %}
 PortGroup           ruby 1.0
@@ -8,6 +9,11 @@ ruby.branches       2.5 2.6
 ruby.setup          {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }} gem {} rubygems
 revision            0
 {% endblock %}
+
+{% block descriptions %}
+description         {{ description }}
+long_description    {{ long_description or '${description}' }}
+{% endblock -%}
 
 {% block dependencies %}
 
