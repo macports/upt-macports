@@ -5,6 +5,11 @@ from unittest import mock
 from io import StringIO
 
 
+class FakeLicense(upt.licenses.License):
+    name = 'Fake license'
+    spdx_identifier = 'fake'
+
+
 class TestMacPortsPackageLicenses(unittest.TestCase):
     def setUp(self):
         self.package = MacPortsPackage()
@@ -21,8 +26,8 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
         self.assertEqual(self.package.licenses, expected)
 
     def test_unknown_license(self):
-        self.package.upt_pkg.licenses = [upt.licenses.ZlibLicense()]
-        expected = 'unknown # MacPorts license unknown for zlib'
+        self.package.upt_pkg.licenses = [FakeLicense]
+        expected = 'unknown # MacPorts license unknown for fake'
         self.assertEqual(self.package.licenses, expected)
 
     def test_bad_license(self):
@@ -65,9 +70,9 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
     @mock.patch('sys.stdout', new_callable=StringIO)
     def test_license_conversion_error(self, m_stdout, m_stderr):
         upt.log.create_logger(logging.DEBUG)
-        self.package.upt_pkg.licenses = [upt.licenses.ZlibLicense()]
+        self.package.upt_pkg.licenses = [FakeLicense()]
         self.package.licenses
-        err = 'MacPorts license unknown for zlib\n'
+        err = 'MacPorts license unknown for fake\n'
         info = 'Please report the error at https://github.com/macports/upt-macports\n' # noqa
         self.assertEqual(m_stdout.getvalue(), info)
         self.assertEqual(m_stderr.getvalue(), err)
