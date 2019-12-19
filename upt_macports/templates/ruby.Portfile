@@ -9,6 +9,15 @@ ruby.setup          {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }} gem {} rubyge
 revision            0
 {% endblock %}
 
+{% block dist_info %}
+{%- if pkg.upt_pkg.homepage | lower not in ['', 'none', 'unknown'] -%}
+homepage            {{ pkg.upt_pkg.homepage }}
+{% else %}
+homepage            https://www.rubygems.org/gems/{{ pkg._pkgname() }}
+{% endif %}
+
+{% endblock %}
+
 {% block dependencies %}
 
 if {${subport} ne ${name}} {
