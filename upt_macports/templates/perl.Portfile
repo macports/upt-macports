@@ -45,6 +45,6 @@ if {${perl5.major} != ""} {
 
 {% raw %}
 }
-{%- endraw -%}
+{% endraw -%}
 {%- endif -%}
 {%- endblock -%}

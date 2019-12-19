@@ -32,4 +32,4 @@ if {${subport} ne ${name}} {
     livecheck.type  none
     {% endif %}
 }
-{%- endblock -%}
+{% endblock %}
