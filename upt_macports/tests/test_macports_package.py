@@ -17,7 +17,7 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
 
     def test_no_licenses(self):
         self.package.upt_pkg.licenses = []
-        expected = 'unknown'
+        expected = 'unknown  # no upstream license found'
         self.assertEqual(self.package.licenses, expected)
 
     def test_one_license(self):
@@ -27,12 +27,12 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
 
     def test_unknown_license(self):
         self.package.upt_pkg.licenses = [FakeLicense]
-        expected = 'unknown # MacPorts license unknown for fake'
+        expected = 'unknown  # MacPorts license unknown for fake'
         self.assertEqual(self.package.licenses, expected)
 
     def test_bad_license(self):
         self.package.upt_pkg.licenses = [upt.licenses.UnknownLicense()]
-        expected = 'unknown'
+        expected = 'unknown  # upt failed to detect license'
         self.assertEqual(self.package.licenses, expected)
 
     def test_multiple_license(self):
