@@ -64,21 +64,22 @@ class MacPortsPackage(object):
             spdx2macports = json.loads(f.read())
 
         if not self.upt_pkg.licenses:
-            self.logger.info('No license found')
-            return 'unknown'
+            self.logger.warning('No license found')
+            return 'unknown  # no upstream license found'
         licenses = []
         for license in self.upt_pkg.licenses:
             try:
                 if license.spdx_identifier == 'unknown':
-                    port_license = 'unknown'
-                    self.logger.warning(f'upt failed to detect license')
+                    warn = 'upt failed to detect license'
+                    port_license = f'unknown  # {warn}'
+                    self.logger.warning(warn)
                 else:
                     port_license = spdx2macports[license.spdx_identifier]
                     self.logger.info(f'Found license {port_license}')
                 licenses.append(port_license)
             except KeyError:
                 err = f'MacPorts license unknown for {license.spdx_identifier}'
-                licenses.append('unknown # ' + err)
+                licenses.append(f'unknown  # {err}')
                 self.logger.error(err)
                 self.logger.info('Please report the error at https://github.com/macports/upt-macports') # noqa
         return ' '.join(licenses)
