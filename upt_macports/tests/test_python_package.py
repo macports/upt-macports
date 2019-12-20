@@ -48,6 +48,24 @@ class TestMacPortsPythonPackage(unittest.TestCase):
         self.assertEqual(self.package.jinja2_reqformat(req),
                          'py${python.version}-require')
 
+    def test_homepage(self):
+        upt_homepages = [
+            '',
+            'unknown',
+            'https://github.com/test-pkg'
+        ]
+
+        excpected_homepages = [
+            'https://pypi.org/project/test-pkg',
+            'https://pypi.org/project/test-pkg',
+            'https://github.com/test-pkg'
+        ]
+
+        for (upt_homepage, expected_homepage) in zip(upt_homepages,
+                                                     excpected_homepages):
+            self.package.upt_pkg.homepage = upt_homepage
+            self.assertEqual(self.package.homepage, expected_homepage)
+
 
 if __name__ == '__main__':
     unittest.main()

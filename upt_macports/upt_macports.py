@@ -120,6 +120,10 @@ class MacPortsPackage(object):
             self.logger.error('Could not determine the type of the source archive') # noqa
             return 'unknown'
 
+    @property
+    def homepage(self):
+        return self.upt_pkg.homepage
+
     def _pkgname(self):
         return self._normalized_macports_name(self.upt_pkg.name)
 
@@ -146,6 +150,14 @@ class MacPortsPythonPackage(MacPortsPackage):
 
     def jinja2_reqformat(self, req):
         return f'py${{python.version}}-{req.name.lower()}'
+
+    @property
+    def homepage(self):
+        homepage = self.upt_pkg.homepage
+        if homepage.startswith('http'):
+            return homepage
+        else:
+            return f'https://pypi.org/project/{self.upt_pkg.name}'
 
 
 class MacPortsPerlPackage(MacPortsPackage):
@@ -189,6 +201,15 @@ class MacPortsPerlPackage(MacPortsPackage):
             self.logger.info('Using fallback location for dist file')
             return f' ../../authors/id/{fallback_dist}/'
 
+    @property
+    def homepage(self):
+        homepage = self.upt_pkg.homepage
+        portgroup_default = 'metacpan.org/pod'
+        if homepage.startswith('http') and portgroup_default not in homepage:
+            return homepage
+        else:
+            return None
+
 
 class MacPortsRubyPackage(MacPortsPackage):
     template = 'ruby.Portfile'
@@ -206,6 +227,14 @@ class MacPortsRubyPackage(MacPortsPackage):
 
     def jinja2_reqformat(self, req):
         return f'rb${{ruby.suffix}}-{req.name.lower()}'
+
+    @property
+    def homepage(self):
+        homepage = self.upt_pkg.homepage
+        if homepage.startswith('http'):
+            return homepage
+        else:
+            return f'https://rubygems.org/gems/{self.upt_pkg.name}'
 
 
 class MacPortsBackend(upt.Backend):
