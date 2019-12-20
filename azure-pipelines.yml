@@ -15,11 +15,14 @@ strategy:
       imageName: 'ubuntu-16.04'
       python.version: '3.7'
     py36_macos:
-      imageName: 'macos-10.13'
+      imageName: 'macos-10.14'
       python.version: '3.6'
     py37_macos:
-      imageName: 'macos-10.13'
+      imageName: 'macos-10.14'
       python.version: '3.7'
+    py38_macos:
+      imageName: 'macos-10.14'
+      python.version: '3.8'
 
 pool:
   vmImage: $(imageName)
