@@ -29,6 +29,24 @@ class TestMacPortsRubyPackage(unittest.TestCase):
         self.assertEqual(self.package.jinja2_reqformat(req),
                          'rb${ruby.suffix}-require')
 
+    def test_homepage(self):
+        upt_homepages = [
+            '',
+            'unknown',
+            'https://github.com/test-pkg',
+        ]
+
+        excpected_homepages = [
+            'https://rubygems.org/gems/test-pkg',
+            'https://rubygems.org/gems/test-pkg',
+            'https://github.com/test-pkg'
+        ]
+
+        for (upt_homepage, expected_homepage) in zip(upt_homepages,
+                                                     excpected_homepages):
+            self.package.upt_pkg.homepage = upt_homepage
+            self.assertEqual(self.package.homepage, expected_homepage)
+
 
 if __name__ == '__main__':
     unittest.main()

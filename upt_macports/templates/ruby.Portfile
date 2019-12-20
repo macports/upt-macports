@@ -9,6 +9,11 @@ ruby.setup          {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }} gem {} rubyge
 revision            0
 {% endblock %}
 
+{% block dist_info %}
+homepage            {{ pkg.homepage }}
+
+{% endblock %}
+
 {% block dependencies %}
 
 if {${subport} ne ${name}} {

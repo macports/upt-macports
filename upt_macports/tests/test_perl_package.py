@@ -52,6 +52,26 @@ class TestMacPortsPerlPackage(unittest.TestCase):
         self.assertEqual(self.package.jinja2_reqformat(req),
                          'p${perl5.major}-require')
 
+    def test_homepage(self):
+        upt_homepages = [
+            '',
+            'unknown',
+            'https://github.com/Foo-Bar',
+            'https://metacpan.org/pod/Foo-Bar'
+        ]
+
+        excpected_homepages = [
+            None,
+            None,
+            'https://github.com/Foo-Bar',
+            None
+        ]
+
+        for (upt_homepage, expected_homepage) in zip(upt_homepages,
+                                                     excpected_homepages):
+            self.package.upt_pkg.homepage = upt_homepage
+            self.assertEqual(self.package.homepage, expected_homepage)
+
 
 if __name__ == '__main__':
     unittest.main()
