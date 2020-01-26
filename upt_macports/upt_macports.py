@@ -9,6 +9,8 @@ import subprocess
 import sys
 from packaging.specifiers import SpecifierSet
 
+from upt_macports.portfile_updater import PortfileUpdater
+
 
 class MacPortsPackage(object):
     def __init__(self):
@@ -328,3 +330,34 @@ class MacPortsBackend(upt.Backend):
                  self.standardize_CPAN_version(dep.version) for dep in s])
 
         return super().needs_requirement(req, phase)
+
+    def current_version(self, frontend, pkgname, output=None):
+        '''Return the current version of PKGNAME, packaged using FRONTEND.
+
+        PKGNAME is the name of the package in the upstream package archive, not
+the port name
+        '''
+        self.frontend = frontend.name
+        try:
+            return self.package_versions(pkgname)[0]
+        except:  # noqa
+            self.logger.error(f'Could not get current version for {pkgname}')
+            return super().current_version(frontend, pkgname, output=output)
+
+    def update_package(self, pdiff, output=None):
+        pkg_class = self.pkg_classes[self.frontend]
+        macports_pkg = pkg_class()
+
+        # TODO: This is basically the same code as the one found in
+        # MacPortsPackage._create_output_directories(). It would be nice not to
+        # repeat ourselves.
+        if output is None:
+            pkgname = pdiff.new.name
+            folder_name = macports_pkg._normalized_macports_folder(pkgname)
+            output_dir = os.path.join(macports_pkg.category, folder_name)
+            portfile_path = f'{output_dir}/Portfile'
+        else:
+            portfile_path = output
+
+        with open(portfile_path, 'r+') as f:
+            PortfileUpdater(f, pdiff, pkg_class).update()
