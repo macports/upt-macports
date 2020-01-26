@@ -7,6 +7,21 @@ from upt_macports.upt_macports import MacPortsBackend
 class TestMacPortsBackend(unittest.TestCase):
     def setUp(self):
         self.macports_backend = MacPortsBackend()
+        self.macports_backend.frontend = 'pypi'
+
+    @mock.patch('upt_macports.upt_macports.MacPortsBackend.package_versions',
+                return_value=['1.2'])
+    def test_current_version(self, m_package_versions):
+        version = self.macports_backend.current_version(mock.Mock(), 'foo')
+        self.assertEqual(version, '1.2')
+
+    @mock.patch('upt_macports.upt_macports.MacPortsBackend.package_versions',
+                return_value=[])
+    @mock.patch('upt.Backend.current_version', return_value='1.2')
+    def test_current_version_fallback(self, m_current_version,
+                                      m_package_versions):
+        version = self.macports_backend.current_version(mock.Mock(), 'foo')
+        self.assertEqual(version, '1.2')
 
     def test_unhandled_frontend(self):
         upt_pkg = upt.Package('foo', '42')
