@@ -23,7 +23,7 @@ homepage            {{ pkg.homepage }}
 
 {% block versions %}
 
-python.versions     37
+python.versions     38
 
 {% endblock %}
 
