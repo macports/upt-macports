@@ -25,23 +25,12 @@ class TestMacPortsPythonPackage(unittest.TestCase):
                 self.package._normalized_macports_folder(name), expected_name)
 
     def test_py_root_name(self):
-        url_names = ['foo', 'Foo', 'Foo', 'foo']
-        pypi_names = ['foo', 'foo', 'pyFoo', 'py-Foo']
-        urls = [
-            'https://fakepypi.com/random/path/foo-13.37.tar.gz',
-            'https://fakepypi.com/random/path/Foo-13.37.tar.gz',
-            'https://fakepypi.com/random/path/Foo-13.37.tar.gz',
-            'https://fakepypi.com/random/path/foo-13.37.tar.gz'
-        ]
-        for (url_name, pypi_name, url) in zip(url_names, pypi_names, urls):
+        pypi_names = ['foo', 'Foo', 'pyFoo', 'pyfoo', 'py-Foo']
+        expected_python_rootnames = [None, 'Foo', 'pyFoo', None, 'py-Foo']
+        for (pypi_name, python_rootname) in zip(pypi_names,
+                                                expected_python_rootnames):
             self.package.upt_pkg = upt.Package(pypi_name, '13.37')
-            self.package.upt_pkg.archives = [upt.Archive(url)]
-            if url_name != pypi_name:
-                self.assertEqual(
-                    self.package._python_root_name(), url_name)
-            else:
-                self.assertEqual(
-                    self.package._python_root_name(), None)
+            self.assertEqual(self.package._python_root_name(), python_rootname)
 
     def test_jinja2_reqformat(self):
         req = upt.PackageRequirement('Require')
