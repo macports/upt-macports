@@ -139,9 +139,9 @@ class MacPortsPythonPackage(MacPortsPackage):
         return f'py-{name}'
 
     def _python_root_name(self):
-        pypi_name = self.upt_pkg.get_archive().filename.split('-'+self.upt_pkg.version)[0] # noqa
-        if pypi_name != self.upt_pkg.name.lower():
-            return pypi_name
+        """Return PyPI name if different than MacPorts naming convention."""
+        if self.upt_pkg.name != self.upt_pkg.name.lower():
+            return self.upt_pkg.name
 
     @staticmethod
     def _normalized_macports_folder(name):
