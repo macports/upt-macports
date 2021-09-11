@@ -38,9 +38,14 @@ long_description    ${description}
 
 {% block dist_info %}
 {% endblock %}
+{% if pkg.upt_pkg.archives %}
 checksums           rmd160  {{ pkg.upt_pkg.archives[0].rmd160 }} \
                     sha256  {{ pkg.upt_pkg.archives[0].sha256 }} \
                     size    {{ pkg.upt_pkg.archives[0].size }}
+{% else %}
+# TODO: The archive was not found (format: {{ pkg.archive_format }}).
+#       The checksums could therefore not be computed.
+{% endif %}
 {% block versions %}
 {% endblock -%}
 
