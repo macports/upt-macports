@@ -9,20 +9,29 @@ trigger:
 strategy:
   matrix:
     py36_linux:
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-latest'
       python.version: '3.6'
     py37_linux:
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-latest'
       python.version: '3.7'
+    py38_linux:
+      imageName: 'ubuntu-latest'
+      python.version: '3.8'
+    py39_linux:
+      imageName: 'ubuntu-latest'
+      python.version: '3.9'
     py36_macos:
-      imageName: 'macos-10.14'
+      imageName: 'macos-latest'
       python.version: '3.6'
     py37_macos:
-      imageName: 'macos-10.14'
+      imageName: 'macos-latest'
       python.version: '3.7'
     py38_macos:
-      imageName: 'macos-10.14'
+      imageName: 'macos-latest'
       python.version: '3.8'
+    py39_macos:
+      imageName: 'macos-latest'
+      python.version: '3.9'
 
 pool:
   vmImage: $(imageName)
@@ -35,7 +44,6 @@ steps:
 
 - script: python -m pip install --upgrade pip
   displayName: 'Install pip'
-
 
 - script: pip install tox
   displayName: 'Install Tox'
