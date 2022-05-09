@@ -43,9 +43,5 @@ if {${name} ne ${subport}} {
 
     {{ depends('test', pkg.upt_pkg.requirements.test) -}}
     {% endif -%}
-
-    {{'
-
-    livecheck.type  none'}}
 }
 {% endblock %}
