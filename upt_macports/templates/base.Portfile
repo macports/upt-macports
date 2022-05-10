@@ -32,7 +32,7 @@ license             {{ pkg.licenses }}
 # maintainers         {example.org:julesverne @github-handle} openmaintainer
 maintainers         nomaintainer
 
-description         {{ pkg.upt_pkg.summary|trim|replace('\n',' \\\n')|indent(20, false) }}
+description         {{ pkg.upt_pkg.summary|trim|replace('\n',' \\\n')|wordwrap(59, True, ' \\\n')|indent(20, false) }}
 {% if pkg.upt_pkg.frontend == 'rubygems' -%}
 long_description    {{ pkg.upt_pkg.description|trim|replace('\n',' \\\n')|replace('\"','\\\"')|wordwrap(59, True, ' \\\n')|indent(20, false) }}
 {%- else -%}
