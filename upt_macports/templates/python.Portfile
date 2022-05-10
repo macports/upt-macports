@@ -41,7 +41,22 @@ if {${name} ne ${subport}} {
     {%- if pkg.upt_pkg.requirements.test %}
 
 
-    {{ depends('test', pkg.upt_pkg.requirements.test) -}}
-    {% endif -%}
+    {{ depends('test', pkg.upt_pkg.requirements.test) }}
+
+    test.run        yes
+    # most test=suites are run using "pytest", if not then the lineb elow should
+    # be modified (e.g., "nosetests-${python.branch}" or "${python.bin} -m unittest"
+    test.cmd        py.test-${python.branch}
+    test.target
+    test.env        PYTHONPATH=${worksrcpath}/build/lib
+
+    # if the Python package is not "noarch" (i.e., something gets compiled),
+    # then line above should be replaced with the following block:
+    # pre-test {
+    #     test.env    PYTHONPATH=[glob -nocomplain ${worksrcpath}/build/lib*]
+    # }
+    {% else %}
+
+    {% endif %}
 }
 {% endblock %}
