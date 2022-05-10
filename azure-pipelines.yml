@@ -8,9 +8,6 @@ trigger:
 
 strategy:
   matrix:
-    py36_linux:
-      imageName: 'ubuntu-latest'
-      python.version: '3.6'
     py37_linux:
       imageName: 'ubuntu-latest'
       python.version: '3.7'
