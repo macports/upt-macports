@@ -4,7 +4,7 @@
 PortGroup           perl5 1.0
 {% endblock %}
 {% block nameversion %}
-perl5.branches      5.26 5.28
+perl5.branches      5.34
 perl5.setup         {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }}{{ pkg._cpandir() }}
 revision            0
 {% endblock %}
