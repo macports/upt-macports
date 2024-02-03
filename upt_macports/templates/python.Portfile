@@ -24,6 +24,11 @@ homepage            {{ pkg.homepage }}
 {% block versions %}
 
 python.versions     312
+## there are different PEP517-compliant backend available that can be used to build Python
+## packages. The python PortGroup set 'python.pep517_backend setuptools' as default; if a
+## port is using another backend, then the line below should be modified accordingly. Valid
+## options are: 'flit', 'hatch', 'poetry', 'maturin', or 'meson'.
+# python.pep517_backend
 
 {% endblock %}
 
