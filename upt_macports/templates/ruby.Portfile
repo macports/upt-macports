@@ -4,7 +4,7 @@
 PortGroup           ruby 1.0
 {% endblock %}
 {% block nameversion %}
-ruby.branches       2.5 2.6
+ruby.branches       3.3
 ruby.setup          {{ pkg._pkgname() }} {{ pkg.upt_pkg.version }} gem {} rubygems
 revision            0
 {% endblock %}
