@@ -23,15 +23,12 @@ homepage            {{ pkg.homepage }}
 
 {% block versions %}
 
-python.versions     310
+python.versions     312
 
 {% endblock %}
 
 {% block dependencies %}
 if {${name} ne ${subport}} {
-    depends_build-append \
-                    port:py${python.version}-setuptools
-
     {%- if pkg.upt_pkg.requirements.run %}
 
 
