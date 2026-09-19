@@ -1,8 +1,8 @@
 import upt
 import logging
 import jinja2
-import pkg_resources
 import json
+import importlib.resources
 import requests
 import os
 import subprocess
@@ -61,9 +61,14 @@ class MacPortsPackage(object):
     @property
     def licenses(self):
         relpath = 'spdx2macports.json'
-        filepath = pkg_resources.resource_filename(__name__, relpath)
-        with open(filepath) as f:
-            spdx2macports = json.loads(f.read())
+        try:
+            spdx2macports = json.loads(
+                importlib.resources.read_text(__package__, relpath)
+            )
+        except FileNotFoundError:
+            self.logger.error(f'Could not find "{relpath}", which should have '
+                              'been installed alongside upt-macports.')
+            return 'unknown  # no upstream license found'
 
         if not self.upt_pkg.licenses:
             self.logger.warning('No license found')

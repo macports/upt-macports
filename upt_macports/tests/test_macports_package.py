@@ -15,6 +15,15 @@ class TestMacPortsPackageLicenses(unittest.TestCase):
         self.package = MacPortsPackage()
         self.package.upt_pkg = upt.Package('foo', '42')
 
+    @mock.patch('sys.stderr', new_callable=StringIO)
+    @mock.patch('importlib.resources.read_text', side_effect=FileNotFoundError)
+    def test_spdx2macports_not_found(self, m_open_text, m_stderr):
+        upt.log.create_logger(logging.DEBUG)
+        expected = 'unknown  # no upstream license found'
+        self.assertEqual(self.package.licenses, expected)
+        self.assertIn('Could not find "spdx2macports.json"',
+                      m_stderr.getvalue())
+
     def test_no_licenses(self):
         self.package.upt_pkg.licenses = []
         expected = 'unknown  # no upstream license found'
